@@ -8,14 +8,16 @@ import lombok.ToString;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class PageResult<T> {
 
-    //分页结果集
+
     private Long total;
     private List<T> rows;
 
-
+    public PageResult(Long total, List<T> rows) {
+        this.total = total;
+        this.rows = rows;
+    }
 }

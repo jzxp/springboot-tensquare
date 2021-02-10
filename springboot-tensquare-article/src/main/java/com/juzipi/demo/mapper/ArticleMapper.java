@@ -1,6 +1,6 @@
 package com.juzipi.demo.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.juzipi.demo.pojo.Article;
 
 //继承mybatisplus的BaseMapper

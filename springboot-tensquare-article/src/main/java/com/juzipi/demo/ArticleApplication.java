@@ -23,4 +23,5 @@ public class ArticleApplication {
         //参数为：机器编号和序列号
         return new IdWorker(1,1);
     }
+
 }
