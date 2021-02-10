@@ -1,0 +1,3 @@
+# Project exclude paths
+/springboot-tensquare-article/target/
+/springboot-tensquare-common/target/
