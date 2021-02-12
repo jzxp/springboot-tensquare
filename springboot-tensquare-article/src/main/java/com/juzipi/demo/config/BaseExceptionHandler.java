@@ -13,9 +13,8 @@ public class BaseExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public Result handler(Exception e){
-        System.out.println("处理异常");
-
-        return new Result(false, StatusCode.ERROR,e.getMessage());
+        e.printStackTrace();
+        return new Result(false,StatusCode.ERROR,"报错了");
     }
 
 }
