@@ -5,8 +5,8 @@ import com.juzipi.demo.entity.Result;
 import com.juzipi.demo.entity.StatusCode;
 import com.juzipi.demo.pojo.Comment;
 import com.juzipi.demo.service.CommentService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +40,7 @@ public class CommentController {
      * @return
      */
     @RequestMapping(value = "{commentId}",method = RequestMethod.GET)
-    public Result findById(@PathVariable String commentId){
+    public Result findById(@PathVariable("commentId") String commentId){
          Comment comment = commentService.fidById(commentId);
 
         return new Result(true,StatusCode.OK,"查询成功",comment);
@@ -66,7 +66,7 @@ public class CommentController {
      * @return
      */
     @RequestMapping(value = "{commentId}",method = RequestMethod.PUT)
-    public Result updateById(@PathVariable String commentId,@RequestBody Comment comment){
+    public Result updateById(@PathVariable("commentId") String commentId,@RequestBody Comment comment){
         //设置评论主键
         comment.set_id(commentId);
         //修改
@@ -82,7 +82,7 @@ public class CommentController {
      * @return
      */
     @RequestMapping(value = "{commentId}",method = RequestMethod.DELETE)
-    public Result deleteById(@PathVariable String commentId){
+    public Result deleteById(@PathVariable("commentId") String commentId){
         commentService.deleteById(commentId);
 
         return new Result(true,StatusCode.OK,"删除成功");
@@ -95,7 +95,7 @@ public class CommentController {
      * @return
      */
     @RequestMapping(value = "article/{articleId}",method = RequestMethod.GET)
-    public Result findByArticleId(@PathVariable String articleId){
+    public Result findByArticleId(@PathVariable("articleId") String articleId){
         List<Comment> commentList = commentService.findByArticleId(articleId);
 
         return new Result(true,StatusCode.OK,"查询成功",commentList);
@@ -108,32 +108,31 @@ public class CommentController {
      * @return
      */
     @RequestMapping(value = "thumbup/{commentId}",method = RequestMethod.PUT)
-    public Result thumbupPlus(@PathVariable String commentId){
+    public Result thumbupPlus(@PathVariable("commentId")  String commentId){
         //把用户点赞信息保存到redis中
         //点赞前查询用户点赞信息来判断是否可以点赞
 
         //模拟用户id
         String userId = "123";
+        String key = userId+commentId;
         //查询用户点赞信息，根据用户id和评论id
-        String result = stringRedisTemplate.opsForValue().get("thumbup_" + userId + "and" + commentId);
+        String result = stringRedisTemplate.opsForValue().get(key);
         //判断查询的结果
-        if (result == null){
+        if (StringUtils.isBlank(result)){
             //为空就可点赞
             commentService.thumbupPlus(commentId);
             //保存点赞信息
-            stringRedisTemplate.opsForValue().set("用户id:" + userId + " 评论id:" + commentId,"保存的点赞信息");
+            stringRedisTemplate.opsForValue().set(key,"成啦!");
             return new Result(true,StatusCode.OK,"点赞成功");
-        }
-        else if (result != null){
-            //获取点赞存入的key
-            //删除key，点赞减一
-            stringRedisTemplate.delete(result);
+        }else {
+            //根据id取消点赞（点赞做减减）
             commentService.thumbupMinus(commentId);
-            //返回信息
+            //根据key删除redis里的信息
+            stringRedisTemplate.delete(key);
+            //返回结果
             return new Result(true,StatusCode.OK,"取消点赞");
         }
 
-        return null;
     }
 
 }
