@@ -10,6 +10,7 @@
     <modules>
         <module>springboot-tensquare-common</module>
         <module>springboot-tensquare-article</module>
+        <module>springboot-tensquare-user</module>
     </modules>
     <packaging>pom</packaging>
 
