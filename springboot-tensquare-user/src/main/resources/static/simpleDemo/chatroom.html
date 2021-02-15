@@ -33,12 +33,8 @@
 					</div>
             </div>
             <div class="panel panel-primary" id="online">
-                <div class="panel-heading">
-                    <h3 class="panel-title">当前在线的其他用户</h3>
-                </div>
                 <div class="panel-body">
-                    <div class="list-group" id="users">
-                    </div>
+                    <input type="text" class="form-control" id="toUserId" placeholder="接收消息用户id"/><br>
                 </div>
             </div>
             <div class="panel panel-primary">
@@ -65,22 +61,23 @@
     </div>
 </div>
 <script>
-	let conn = {};
-	WebIM.config = config;
-	//创建连接
-	conn = WebIM.conn = new WebIM.connection({
-		appKey: WebIM.config.appkey,
-		isHttpDNS: WebIM.config.isHttpDNS,
-		isMultiLoginSessions: WebIM.config.isMultiLoginSessions,
-		https: WebIM.config.https,
-		url: WebIM.config.socketServer,
-		apiUrl: WebIM.config.restServer,
-		isAutoLogin: WebIM.config.isAutoLogin,
-		autoReconnectNumMax: WebIM.config.autoReconnectNumMax,
-		autoReconnectInterval: WebIM.config.autoReconnectInterval,
-		delivery: WebIM.config.delivery,
-		useOwnUploadFun: WebIM.config.useOwnUploadFun
-	})
+    //初始化IM SDK
+    WebIM.config = config;
+    WebIM.conn = new WebIM.connection({
+        appKey: WebIM.config.appkey,
+        isHttpDNS: WebIM.config.isHttpDNS,
+        isMultiLoginSessions: WebIM.config.isMultiLoginSessions,
+        host: WebIM.config.Host,
+        https: WebIM.config.https,
+        url: WebIM.config.xmppURL,
+        apiUrl: WebIM.config.apiURL,
+        isAutoLogin: false,
+        heartBeatWait: WebIM.config.heartBeatWait,
+        autoReconnectNumMax: WebIM.config.autoReconnectNumMax,
+        autoReconnectInterval: WebIM.config.autoReconnectInterval,
+        isStropheLog: WebIM.config.isStropheLog,
+        delivery: WebIM.config.delivery
+    })
 
 
     //实时获取时间
@@ -108,28 +105,7 @@
         },         //连接关闭回调
         onTextMessage: function (message) {
             console.log('onTextMessage: ', message);
-            //判断是否有扩展字段，会议ID是否为空，如果有会议ID 就加入会议
-            if (message.ext.conferenceId != undefined) {
-                var truthBeTold = window.confirm((message.from + "邀请您加入会议"));
-                if (truthBeTold) {
-                    //使用会议ID，密码加入会议
-                    var ext = "收到邀请加入会议"
-                    emedia.mgr.joinConference(message.ext.conferenceId, message.ext.password, ext).then(function () {
-                        console.log("收到邀请加入会议成功")
-                        var constaints = { audio: true, video: false };
-                        var videoTag = $('#meVideo')[0];
-                        //发布视频流
-                        emedia.mgr.publish(constaints, videoTag, ext).then(function (pushedStream) {
-                            console.log('>>> 收到邀请加入会议，发布视频流成功', pushedStream);
-
-                        }).catch(function (error) {
-                            console.log('>>> 收到邀请加入会议，发布视频流失败', error);
-                        });
-                    }).catch(function (error) {
-                        console.log("收到邀请加入会议失败")
-                    })
-                }
-            }
+            $("#log-container").append("<div class='bg-success'><label class='text-info'>收到"+message.from+"向您发来的消息: </label><div class='text-info'>"+message.data+"</div></div><br>");
 
         },    //收到文本消息
         onEmojiMessage: function (message) {
@@ -347,22 +323,63 @@
             };
             WebIM.conn.registerUser(options);
         })
-        // //登陆
-        // $('#login').click(function () {
-        //     options = {
-        //         apiUrl: WebIM.config.apiURL,
-        //         user: uname,
-        //         pwd: upwd,
-        //         appKey: WebIM.config.appkey
-        //     };
-        //     WebIM.conn.open(options);
-        // })
+        //登陆
+        $('#login').click(function () {
+            userId = $('#userId').val();
+            //设置Ajax是同步的，先获取用户信息再注册
+            $.ajaxSettings.async = false;
+            //使用Ajax获取用户数据
+            $.get("/user/"+userId,function (data){
+                nickname = data.data.nickname;
+                password = data.data.password;
+            })
+
+            options = {
+                apiUrl: WebIM.config.apiURL,
+                user: userId,
+                pwd: password,
+                appKey: WebIM.config.appkey
+            };
+            WebIM.conn.open(options);
+        })
         // //退出
         // $('#logout').click(function () {
         //     WebIM.conn.close();
         // });
     })
 
+
+    //文本消息
+    $('#send').click(function () {
+        var id = WebIM.conn.getUniqueId();//生成本地消息id
+        var toID = $('#toUserId').val();
+        var toMsg = $('#myinfo').val();
+        var msg = new WebIM.message('txt', id);
+        msg.set({
+            msg: toMsg,
+            to: toID,
+            ext: {
+                time: newDate,
+            },
+            success: function (id, serverMsgId) {
+                console.log('发送文本消息成功', id, serverMsgId);
+            },
+            fail: function (err) {
+                console.log("发送文本消息失败", err);
+            }
+        });
+        // //判断消息类型是否为群组
+        // if (gType != undefined) {
+        //     msg.setGroup('groupchat')
+        // };
+        // //判断是否为聊天室
+        // if (roomType != undefined) {
+        //     msg.set.roomType = true
+        // }
+        WebIM.conn.send(msg.body);
+        //在聊天信息显示界面显示聊天数据
+        $("#log-container").append("<div class='bg-success'><label class='text-info'>消息已发送: </label><div class='text-info'>"+toMsg+"</div></div><br>");
+    });
 
 </script>
 
