@@ -11,6 +11,8 @@
         <module>springboot-tensquare-common</module>
         <module>springboot-tensquare-article</module>
         <module>springboot-tensquare-user</module>
+        <module>springboot-tensquare-eureka</module>
+        <module>springboot-tensquare-encrypt</module>
     </modules>
     <packaging>pom</packaging>
 

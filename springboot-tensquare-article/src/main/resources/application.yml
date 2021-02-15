@@ -22,6 +22,18 @@ spring:
 #    端口号默认的就不用写了，默认为 6379
 
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:4444/eureka
+  instance:
+#    发现ip
+    prefer-ip-address: true
+#    拉取服务间隔
+    lease-expiration-duration-in-seconds: 30
+#    心跳间隔
+    lease-renewal-interval-in-seconds: 15
+
 mybatis-plus:
   #  mapper-locations: classpath:/mapper/*Mapper.xml
   #实体扫描，多个package用逗号或者分号分隔
@@ -36,4 +48,6 @@ mybatis-plus:
       lazyLoadingEnabled: true #延时加载的开关
       multipleResultSetsEnabled: true #开启延时加载，否则按需加载属性
       log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试用
+
+
 

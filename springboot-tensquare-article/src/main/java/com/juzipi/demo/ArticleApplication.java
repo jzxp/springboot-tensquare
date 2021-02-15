@@ -4,10 +4,11 @@ import com.juzipi.demo.util.IdWorker;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 //配置mapper包扫描
 @MapperScan("com.juzipi.demo.mapper")
 public class ArticleApplication {
