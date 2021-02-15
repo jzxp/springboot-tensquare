@@ -1,0 +1,15 @@
+server:
+  port: 4444
+
+spring:
+  application:
+    name: tensquare-eureka
+
+eureka:
+  client:
+#    取消将自己注册到eureka中
+    register-with-eureka: false
+#    是否从eureka中获取信息
+    fetch-registry: false
+    service-url:
+      defaultZone: http://127.0.0.1:4444/eureka/
