@@ -1,10 +1,6 @@
 package com.juzipi.demo.rsa;
 
-//JDK 1.8版本之后删除了这个，替换方法在下面
 //import sun.misc.BASE64Decoder;
-//这里是替换方法
-import java.util.Base64;
-import java.util.Base64.Decoder;
 
 import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
@@ -13,6 +9,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -178,8 +175,11 @@ public class RSA {
      */
     public static PrivateKey getPrivateKey(String key) throws Exception {
         byte[] keyBytes;
-        Decoder decoder = Base64.getDecoder();
+
+        Base64.Decoder decoder = Base64.getMimeDecoder();
+//        keyBytes = (new BASE64Decoder()).decodeBuffer(key);
         keyBytes = decoder.decode(key);
+
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
@@ -194,8 +194,11 @@ public class RSA {
      */
     public static PublicKey getPublicKey(String key) throws Exception {
         byte[] keyBytes;
-        Decoder decoder = Base64.getDecoder();
+//        keyBytes = (new BASE64Decoder()).decodeBuffer(key);
+
+        Base64.Decoder decoder = Base64.getMimeDecoder();
         keyBytes = decoder.decode(key);
+
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         PublicKey publicKey = keyFactory.generatePublic(keySpec);

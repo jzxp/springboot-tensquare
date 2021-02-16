@@ -2,9 +2,9 @@ package com.juzipi.demo.service;
 
 
 
+import com.juzipi.demo.rsa.Base64Utils;
 import com.juzipi.demo.rsa.RSA;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
 
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -28,7 +28,7 @@ public class RsaServiceImpl implements RsaService {
      */
     public String RSADecryptDataPEM(String encryptData, String prvKey) throws Exception {
     	byte[] encryptBytes = encryptData.getBytes();
-        byte[] prvdata = RSA.decryptByPrivateKey(Base64Utils.decode(encryptBytes), prvKey);
+        byte[] prvdata = RSA.decryptByPrivateKey(Base64Utils.decode(encryptData), prvKey);
 
         String outString = new String(prvdata, "UTF-8");
         return outString;

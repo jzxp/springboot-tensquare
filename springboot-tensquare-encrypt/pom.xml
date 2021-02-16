@@ -26,11 +26,7 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.sun.jini</groupId>
-            <artifactId>sun-util</artifactId>
-            <version>2.1</version>
-        </dependency>
+
     </dependencies>
 
 </project>

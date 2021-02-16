@@ -10,20 +10,20 @@ zuul:
 #    配置请求URL的请求规则
     tensquare-article:
       path: /article/**
-#      指定Eureka注册中心的服务id
-#      serviceId: tensquare-article
-#      所有的article请求都进行转发
+##      指定Eureka注册中心的服务id
+      serviceId: tensquare-article
+##      所有的article请求都进行转发
       strip-prefix: true
       sentiviteHearders:
-#         让zuul网关处理cookie和重定向
+##         让zuul网关处理cookie和重定向
         customSensitiveHeaders: true
 
 eureka:
   client:
     service-url:
-      defaultZone: http://127.0.0.1:4444/eureka
+      defaultZone: http://127.0.0.1:4444/eureka/
   instance:
+    #    发现ip
+    prefer-ip-address: true
     lease-renewal-interval-in-seconds: 15
     lease-expiration-duration-in-seconds: 30
-#    发现ip
-    prefer-ip-address: true

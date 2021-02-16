@@ -4,7 +4,7 @@ package com.juzipi.demo.rsa;
 import java.io.*;
 
 
-class Base64Utils {
+public class Base64Utils {
     /** */
     /**
      * 28.     * 文件读取缓冲区大小
