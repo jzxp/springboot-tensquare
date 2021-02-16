@@ -7,6 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="springboot-tensquare-notice" />
         <module name="springboot-tensquare-encrypt" />
         <module name="springboot-tensquare-eureka" />
         <module name="springboot-tensquare-common" />
@@ -22,6 +23,7 @@
       <module name="springboot-tensquare-common" options="-parameters" />
       <module name="springboot-tensquare-encrypt" options="-parameters" />
       <module name="springboot-tensquare-eureka" options="-parameters" />
+      <module name="springboot-tensquare-notice" options="-parameters" />
       <module name="springboot-tensquare-user" options="-parameters" />
     </option>
   </component>

@@ -1,5 +1,6 @@
 server:
   port: 4102
+
 spring:
   application:
     name: tensquare-user
@@ -8,6 +9,15 @@ spring:
     url: jdbc:mysql://159.75.87.40:3306/tensquare_user?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone = GMT
     username: root
     password: root
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:4444/eureka/
+  instance:
+    lease-renewal-interval-in-seconds: 15
+    lease-expiration-duration-in-seconds: 30
+    prefer-ip-address: true
 
 mybatis-plus:
   #  mapper-locations: classpath:/mapper/*Mapper.xml

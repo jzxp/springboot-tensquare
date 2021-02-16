@@ -14,7 +14,10 @@ public class BaseExceptionHandler {
     @ResponseBody
     public Result handler(Exception e){
         e.printStackTrace();
-        return new Result(false,StatusCode.ERROR,"报错了");
+//        e.getMessage();
+//        e.getStackTrace();
+//        e.getCause();
+        return new Result(false,StatusCode.ERROR,"再仔细检查一遍!不行就两边!");
     }
 
 }

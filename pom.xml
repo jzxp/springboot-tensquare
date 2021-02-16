@@ -13,6 +13,7 @@
         <module>springboot-tensquare-user</module>
         <module>springboot-tensquare-eureka</module>
         <module>springboot-tensquare-encrypt</module>
+        <module>springboot-tensquare-notice</module>
     </modules>
     <packaging>pom</packaging>
 
