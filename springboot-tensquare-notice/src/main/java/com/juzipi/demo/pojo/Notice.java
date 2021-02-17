@@ -16,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("tb_notice")
-public class Notice implements Serializable {
+public class Notice implements Serializable, CharSequence {
 
 	@TableId(type = IdType.INPUT)
 	private String id;//ID
@@ -123,4 +123,19 @@ public class Notice implements Serializable {
 	public void setState(String state) {
 		this.state = state;
 	}
+
+    @Override
+    public int length() {
+        return 0;
+    }
+
+    @Override
+    public char charAt(int index) {
+        return 0;
+    }
+
+    @Override
+    public CharSequence subSequence(int start, int end) {
+        return null;
+    }
 }

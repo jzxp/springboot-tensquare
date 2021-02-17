@@ -52,6 +52,10 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
@@ -59,6 +63,12 @@
         <dependency>
             <groupId>org.juzipi</groupId>
             <artifactId>springboot-tensquare-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.juzipi</groupId>
+            <artifactId>springboot-tensquare-user</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
