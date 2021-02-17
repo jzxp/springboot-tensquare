@@ -1,6 +1,7 @@
 server:
   port: 4100
 
+
 spring:
   application:
 #    微服务名
@@ -8,9 +9,9 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 #    切记，端口号为云服务器的公共ip
-    url: jdbc:mysql://159.75.87.40:3306/tensquare_article?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone = GMT
-    username: root
-    password: root
+    url: jdbc:mysql://xxx.xx.xx.xx:3306/tensquare_article?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone = GMT
+    username: xxxx
+    password: xxxx
   data:
     mongodb:
       host: 159.75.87.40
@@ -20,7 +21,8 @@ spring:
   redis:
     host: 159.75.87.40
 #    端口号默认的就不用写了，默认为 6379
-
+  main:
+    allow-bean-definition-overriding: true
 
 eureka:
   client:
