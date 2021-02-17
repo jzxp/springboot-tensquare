@@ -7,7 +7,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication
-@EnableEurekaClient
 @EnableDiscoveryClient
 @MapperScan("com.juzipi.demo.mapper")
 public class UserApplication {

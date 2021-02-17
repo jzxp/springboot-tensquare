@@ -13,7 +13,7 @@ import java.util.Date;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Comment implements Serializable {
+public class Comment implements Serializable, CharSequence {
 
     private String _id;
     //文章id
@@ -29,4 +29,19 @@ public class Comment implements Serializable {
     //点赞数
     private Integer thumbup;
 
+
+    @Override
+    public int length() {
+        return 0;
+    }
+
+    @Override
+    public char charAt(int index) {
+        return 0;
+    }
+
+    @Override
+    public CharSequence subSequence(int start, int end) {
+        return null;
+    }
 }

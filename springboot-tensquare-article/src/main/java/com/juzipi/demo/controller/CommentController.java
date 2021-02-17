@@ -8,6 +8,7 @@ import com.juzipi.demo.service.CommentService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,8 +30,11 @@ public class CommentController {
     @RequestMapping(method = RequestMethod.GET)
     public Result findAll(){
         List<Comment> comments = commentService.findAll();
+        if (!CollectionUtils.isEmpty(comments)){
+            return new Result(true, StatusCode.OK,"查询成功",comments);
+        }
+        return new Result(false,StatusCode.ERROR,"查询失败");
 
-        return new Result(true, StatusCode.OK,"查询成功",comments);
     }
 
 
@@ -42,8 +46,11 @@ public class CommentController {
     @RequestMapping(value = "{commentId}",method = RequestMethod.GET)
     public Result findById(@PathVariable("commentId") String commentId){
          Comment comment = commentService.fidById(commentId);
+         if (StringUtils.isNotBlank(comment)){
+             return new Result(true,StatusCode.OK,"查询成功",comment);
+         }
 
-        return new Result(true,StatusCode.OK,"查询成功",comment);
+        return new Result(false,StatusCode.ERROR,"查询失败");
     }
 
 
@@ -54,8 +61,12 @@ public class CommentController {
      */
     @RequestMapping(method = RequestMethod.POST)
     public Result save(@RequestBody Comment comment){
-        commentService.save(comment);
-        return new Result(true,StatusCode.OK,"新增成功");
+        if (StringUtils.isNotBlank(comment)){
+            commentService.save(comment);
+            return new Result(true,StatusCode.OK,"新增成功");
+        }
+
+        return new Result(false,StatusCode.ERROR,"新增失败");
     }
 
 
@@ -69,10 +80,14 @@ public class CommentController {
     public Result updateById(@PathVariable("commentId") String commentId,@RequestBody Comment comment){
         //设置评论主键
         comment.set_id(commentId);
-        //修改
-        commentService.updateById(comment);
 
-        return new Result(true,StatusCode.OK,"修改成功");
+        if (StringUtils.isNotBlank(commentId)){
+            //修改
+            commentService.updateById(comment);
+            return new Result(true,StatusCode.OK,"修改成功");
+        }
+
+        return new Result(false,StatusCode.ERROR,"修改失败");
     }
 
 
@@ -83,9 +98,12 @@ public class CommentController {
      */
     @RequestMapping(value = "{commentId}",method = RequestMethod.DELETE)
     public Result deleteById(@PathVariable("commentId") String commentId){
-        commentService.deleteById(commentId);
+        if (StringUtils.isNotBlank(commentId)){
+            commentService.deleteById(commentId);
+            return new Result(true,StatusCode.OK,"删除成功");
+        }
 
-        return new Result(true,StatusCode.OK,"删除成功");
+        return new Result(false,StatusCode.ERROR,"查询失败");
     }
 
 
@@ -97,8 +115,11 @@ public class CommentController {
     @RequestMapping(value = "article/{articleId}",method = RequestMethod.GET)
     public Result findByArticleId(@PathVariable("articleId") String articleId){
         List<Comment> commentList = commentService.findByArticleId(articleId);
+        if (!CollectionUtils.isEmpty(commentList)){
+            return new Result(true,StatusCode.OK,"查询成功",commentList);
+        }
 
-        return new Result(true,StatusCode.OK,"查询成功",commentList);
+        return new Result(false,StatusCode.ERROR,"查询失败");
     }
 
 
