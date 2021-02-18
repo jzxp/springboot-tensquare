@@ -61,12 +61,12 @@ public class CommentController {
      */
     @RequestMapping(method = RequestMethod.POST)
     public Result save(@RequestBody Comment comment){
-        if (StringUtils.isNotBlank(comment)){
+//        if (StringUtils.isNotBlank(comment)){
             commentService.save(comment);
             return new Result(true,StatusCode.OK,"新增成功");
-        }
+//        }
 
-        return new Result(false,StatusCode.ERROR,"新增失败");
+//        return new Result(false,StatusCode.ERROR,"新增失败");
     }
 
 

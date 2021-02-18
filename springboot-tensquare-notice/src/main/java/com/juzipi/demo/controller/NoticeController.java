@@ -11,8 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("notice")
 @CrossOrigin
@@ -29,11 +27,11 @@ public class NoticeController {
      */
     @RequestMapping(value = "{id}",method = RequestMethod.GET)
     public Result selectById(@PathVariable String id){
-//        if (StringUtils.isNotBlank(id)){
+        if (StringUtils.isNotBlank(id)){
             Notice notice = noticeService.selectById(id);
             return new Result(true, StatusCode.OK,"查询成功",notice);
-//        }
-//            return new Result(false, StatusCode.ERROR,"查询失败");
+        }
+            return new Result(false, StatusCode.ERROR,"查询失败");
 
 
     }
@@ -65,12 +63,12 @@ public class NoticeController {
      */
     @RequestMapping(method = RequestMethod.POST)
     public Result save(@RequestBody Notice notice){
-        if (StringUtils.isNotBlank(notice)){
+//        if (StringUtils.isNotBlank(notice)){
             noticeService.save(notice);
 
             return new Result(true,StatusCode.OK,"新增成功");
-        }
-            return new Result(false,StatusCode.ERROR,"新增失败");
+//        }
+//            return new Result(false,StatusCode.ERROR,"新增失败");
 
     }
 

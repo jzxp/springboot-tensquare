@@ -57,6 +57,7 @@ public class ArticleController {
     @RequestMapping(method = RequestMethod.POST)
     public Result save(@RequestBody Article article){
         articleService.save(article);
+
         return new Result(true,StatusCode.OK,"新增成功");
     }
 
@@ -91,7 +92,13 @@ public class ArticleController {
     }
 
 
-
+    /**
+     * 查询分页结果集
+     * @param page
+     * @param size
+     * @param map
+     * @return
+     */
     @RequestMapping(value = "search/{page}/{size}",method = RequestMethod.POST)
     //之前接收使用的使mapper,现在根据条件查询，
     //所有的条件都需要进行判断，遍历mapper的所有属性要使用反射的方式，性能较低
@@ -107,6 +114,24 @@ public class ArticleController {
         return new Result(true,StatusCode.OK,"查询成功",pageResult);
 
 
+    }
+
+
+    /**
+     * 根据文章id和用户id建立订阅关系
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "subscribe",method = RequestMethod.POST)
+    public Result subscribe(@RequestBody Map map){
+        //如果返回true就是订阅文章作者
+        //false就是取消订阅
+        Boolean flag = articleService.subscribe(map.get("articleId").toString(),map.get("userId").toString());
+        if (flag){
+            return new Result(true,StatusCode.OK,"订阅成功");
+        }
+
+        return new Result(true,StatusCode.OK,"取消订阅成功");
     }
 
 }

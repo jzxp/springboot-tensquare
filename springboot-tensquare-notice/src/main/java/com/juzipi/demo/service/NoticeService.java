@@ -37,19 +37,19 @@ public class NoticeService {
         //查询用户昵称
         Result userResult = userClient.selectById(notice.getOperatorId());
         HashMap userMap = (HashMap) userResult.getData();
-
-
-        //设置作者的用户昵称到消息中
-        //设置用户昵称
-//        notice.setOperatorName(userMap.get("nickname").toString());
+            String nickname = userMap.get("nickname").toString();
+            //设置作者的用户昵称到消息中
+            //设置用户昵称
+            notice.setOperatorName(nickname);
 
         //查询对象名称
         Result articleResult = articleClient.fidnById(notice.getTargetId());
-        Map articleMap = (Map) articleResult.getData();
+        HashMap articleMap = (HashMap) articleResult.getData();
         //设置对象名称到消息通知中
-        String title = articleMap.get("title").toString();
-        //设置消息标题
-//        notice.setTargetName(title);
+            String title = articleMap.get("title").toString();
+            //设置消息标题
+            notice.setTargetName(title);
+
 
     }
 
