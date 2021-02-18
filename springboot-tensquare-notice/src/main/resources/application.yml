@@ -6,11 +6,11 @@ spring:
     name: tensquare-notice
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://xxx.xx.xx.xx:3306/tensquare_notice?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone = GMT
-    username: xxxx
-    password: xxxx
+    url: jdbc:mysql://xxxxxxxx:3306/tensquare_notice?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone = GMT
+    username: xx
+    password: xx
   redis:
-    host: 159.75.87.40
+    host: xxxxxxxx
 
 
 eureka:
