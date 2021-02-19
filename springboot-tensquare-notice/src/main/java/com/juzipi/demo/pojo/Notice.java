@@ -124,6 +124,8 @@ public class Notice implements Serializable, CharSequence {
 		this.state = state;
 	}
 
+
+
     @Override
     public int length() {
         return 0;

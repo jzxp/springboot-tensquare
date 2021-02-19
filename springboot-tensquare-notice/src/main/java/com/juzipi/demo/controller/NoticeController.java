@@ -9,6 +9,7 @@ import com.juzipi.demo.pojo.NoticeFresh;
 import com.juzipi.demo.service.NoticeService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -48,9 +49,11 @@ public class NoticeController {
     public Result selectByList(@RequestBody Notice notice,
                                @PathVariable Integer page,
                                @PathVariable Integer size){
-        Page<Notice> pageData = noticeService.selectByList(notice,page,size);
+        Page<Notice> pageData = noticeService.selectByPage(notice,page,size);
+        if (pageData == null){
+            return new Result(false,StatusCode.ERROR,"查询失败");
+        }
         PageResult<Notice> pageResult = new PageResult<>((long)pageData.getTotal(),pageData.getRecords());
-
 
         return new Result(true,StatusCode.OK,"查询成功",pageResult);
     }
@@ -82,10 +85,10 @@ public class NoticeController {
     public Result updateById(@RequestBody Notice notice){
         String noticeId = notice.getId();
         noticeService.updateById(notice);
-        if (StringUtils.isNotBlank(noticeId)){
+//        if (StringUtils.isNotBlank(noticeId)){
             return new Result(true,StatusCode.OK,"修改成功");
-        }
-        return new Result(false,StatusCode.ERROR,"修改失败");
+//        }
+//        return new Result(false,StatusCode.ERROR,"修改失败");
     }
 
 
@@ -117,12 +120,12 @@ public class NoticeController {
     @RequestMapping(method = RequestMethod.DELETE)
     public Result freshDelete(@RequestBody NoticeFresh noticeFresh){
 
-        if (StringUtils.isNotBlank(noticeFresh)){
+//        if (StringUtils.isNotBlank(noticeFresh)){
             noticeService.freshDelete(noticeFresh);
             return new Result(true,StatusCode.OK,"删除成功");
-        }
+//        }
 
-        return new Result(false,StatusCode.ERROR,"删除失败");
+//        return new Result(false,StatusCode.ERROR,"删除失败");
     }
 
 }

@@ -8,6 +8,7 @@ import com.juzipi.demo.pojo.Article;
 import com.juzipi.demo.pojo.Notice;
 import com.juzipi.demo.util.IdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -25,6 +26,8 @@ public class ArticleService {
     private IdWorker idWorker;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+//    @Autowired
+//    private RedisTemplate redisTemplate;
     @Autowired
     private NoticeClient noticeClient;
 
@@ -54,9 +57,10 @@ public class ArticleService {
      */
     public void save(Article article) {
         //TODO:使用jwt鉴权获取当前用户的信息 用户的id 也就是文章作者id
-        String userId = "1";
+        String userId = "3";
         //设置用户id
         article.setUserid(userId);
+
 
         //使用分布式id生成器
         String id = idWorker.nextId() + "";
@@ -158,16 +162,16 @@ public class ArticleService {
 
 
 
-    public Boolean subscribe(String userId , String articleId) {
+    public Boolean subscribe(String articleId , String userId) {
         //根据文章id查询文章作者id
         String authorId = articleMapper.selectById(articleId).getUserid();
 
         //存放用户订阅信息的集合key，存放作者id
         //article-subscribe
-        String userKey = "文章订阅信息: 存放作者id" + userId;
+        String userKey = "用户订阅信息(key) : 作者id(value)" + userId;
         //存放作者订阅者的信息的集合key，存放订阅者id
         //article-author
-        String authorKey = "文章读者信息: 存放用户id"+authorId;
+        String authorKey = "作者订阅信息(key) : 用户id(value)"+authorId;
         //查询用户订阅关系，是否订阅
 
         Boolean flag = stringRedisTemplate.boundSetOps(userKey).isMember(authorId);
@@ -191,4 +195,37 @@ public class ArticleService {
 
 
     }
+
+
+
+    public void thumbup(String articleId, String userId) {
+        Article article = articleMapper.selectById(articleId);
+        //设置点赞初始值
+
+        article.setThumbup(article.getThumbup()+1);
+        articleMapper.updateById(article);
+
+        //点赞成功后发送信息提醒
+        Notice notice = new Notice();
+        //接收消息的用户id
+        notice.setReceiverId(article.getUserid());
+        //进行操作的用户的id
+        notice.setOperatorId(userId);
+        //操作类型
+        notice.setAction("publish");
+        //被操作的对象，文章，评论等
+        notice.setTargetType("article");
+        //被操作对象的id
+        notice.setTargetId(articleId);
+        //通知类型
+        notice.setType("user");
+
+        //保存消息
+        noticeClient.save(notice);
+
+    }
+
+
+
+
 }

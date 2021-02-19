@@ -13,9 +13,10 @@ import com.juzipi.demo.util.IdWorker;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class NoticeService {
@@ -63,36 +64,51 @@ public class NoticeService {
     }
 
 
+
     //查询分页结果集
-    public Page<Notice> selectByList(Notice notice, Integer page, Integer size) {
-        if (StringUtils.isNotBlank(notice)){
-            //封装分页对象
-            Page<Notice> pageData = new Page<>(page,size);
-
-            //执行分页查询
-            List<Notice> noticeList = noticeMapper.selectPage(pageData, new EntityWrapper<>(notice));
-
-            //完善消息
-            for (Notice n: noticeList) {
-                getInfo(n);
-            }
-            //设置结果集到分页对象中
-            pageData.setRecords(noticeList);
-
-            //返回
-            return pageData;
-        }
-
-        return null;
+    public Page<Notice> selectByPage(Notice notice, Integer page, Integer size) {
+        //封装分页对象
+        Page<Notice> pageData = new Page<>(page, size);
+        //执行分页查询
+        List<Notice> noticeList = noticeMapper.selectPage(pageData,
+                new EntityWrapper<>(notice));
+        //设置结果集到分页对象中
+        pageData.setRecords(noticeList);
+        //返回
+        return pageData;
     }
 
 
+
+    //查询分页结果集
+//    public Page<Notice> selectByList(Notice notice, Integer page, Integer size) {
+//        if (StringUtils.isNotBlank(notice)){
+//            //封装分页对象
+//            Page<Notice> pageData = new Page<>(page,size);
+//
+//            //执行分页查询
+//            List<Notice> noticeList = noticeMapper.selectPage(pageData, new EntityWrapper<>(notice));
+//
+//            //完善消息
+//            for (Notice n: noticeList) {
+//                getInfo(n);
+//            }
+//            //设置结果集到分页对象中
+//            pageData.setRecords(noticeList);
+//
+//            //返回
+//            return pageData;
+//        }
+//
+//        return null;
+//    }
+
+
     //新增消息
-    @Transactional
     public void save(Notice notice) {
         //设置初始值
         //设置状态 0未读，1以读
-        if (!StringUtils.isEmpty(notice)){
+//        if (StringUtils.isNotBlank(notice)){
             notice.setState("0");
             notice.setCreatetime(new Date());
             //使用分布式id生成器生成id
@@ -105,17 +121,16 @@ public class NoticeService {
             noticeFresh.setNoticeId(id);//消息id
             noticeFresh.setUserId(notice.getReceiverId());//待通知用户的id
             noticeFreshMapper.insert(noticeFresh);
-        }
+//        }
 
     }
 
 
     //修改消息
     public void updateById(Notice notice) {
-        if (StringUtils.isNotBlank(notice)){
+//        if (StringUtils.isNotBlank(notice)){
             noticeMapper.updateById(notice);
-        }
-
+//        }
     }
 
 
@@ -140,9 +155,9 @@ public class NoticeService {
 
     //删除通知
     public void freshDelete(NoticeFresh noticeFresh) {
-        if (StringUtils.isNotBlank(noticeFresh)){
+//        if (StringUtils.isNotBlank(noticeFresh)){
             noticeFreshMapper.delete(new EntityWrapper<>(noticeFresh));
-        }
+//        }
 
     }
 }

@@ -9,7 +9,9 @@ import com.juzipi.demo.entity.Result;
 import com.juzipi.demo.entity.StatusCode;
 import com.juzipi.demo.pojo.Article;
 import com.juzipi.demo.service.ArticleService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +24,8 @@ public class ArticleController {
 
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
 
     /**
@@ -133,5 +137,34 @@ public class ArticleController {
 
         return new Result(true,StatusCode.OK,"取消订阅成功");
     }
+
+
+    /**
+     * 根据文章id点赞
+     * @param articleId
+     * @return
+     */
+    @RequestMapping(value = "thumbup/{articleId}",method = RequestMethod.PUT)
+    public Result thumbup(@PathVariable String articleId){
+        //根据用户id点赞
+
+        String userId = "3";
+        String key = "根据文章id点赞" + userId + "_" + articleId;
+
+        //查询用户点赞信息，根据用户id和文章id
+        String flag = stringRedisTemplate.opsForValue().get(key);
+
+        //判断查询到的结果是否为false
+        if (StringUtils.isBlank(flag)){
+            //为false就可以点赞
+            articleService.thumbup(articleId,userId);
+            stringRedisTemplate.opsForValue().set(key,"赞");
+            return new Result(true,StatusCode.OK,"点赞成功");
+
+        }
+        return new Result(false,StatusCode.OK,"已经点过赞了");
+    }
+
+
 
 }
