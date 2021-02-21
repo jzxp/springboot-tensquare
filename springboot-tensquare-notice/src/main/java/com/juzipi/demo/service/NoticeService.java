@@ -37,20 +37,21 @@ public class NoticeService {
     private void getInfo(Notice notice){
         //查询用户昵称
         Result userResult = userClient.selectById(notice.getOperatorId());
+
         HashMap userMap = (HashMap) userResult.getData();
             String nickname = userMap.get("nickname").toString();
             //设置作者的用户昵称到消息中
-            //设置用户昵称
+            //设置操作者用户昵称
             notice.setOperatorName(nickname);
 
         //查询对象名称
         Result articleResult = articleClient.fidnById(notice.getTargetId());
+
         HashMap articleMap = (HashMap) articleResult.getData();
         //设置对象名称到消息通知中
-            String title = articleMap.get("title").toString();
-            //设置消息标题
-            notice.setTargetName(title);
-
+        String title = articleMap.get("title").toString();
+        //设置消息标题
+        notice.setTargetName(title);
 
     }
 
@@ -70,8 +71,13 @@ public class NoticeService {
         //封装分页对象
         Page<Notice> pageData = new Page<>(page, size);
         //执行分页查询
-        List<Notice> noticeList = noticeMapper.selectPage(pageData,
-                new EntityWrapper<>(notice));
+        List<Notice> noticeList = noticeMapper.selectPage(pageData, new EntityWrapper<>(notice));
+
+        //完善消息
+        for (Notice n : noticeList){
+            getInfo(n);
+        }
+
         //设置结果集到分页对象中
         pageData.setRecords(noticeList);
         //返回
@@ -108,7 +114,6 @@ public class NoticeService {
     public void save(Notice notice) {
         //设置初始值
         //设置状态 0未读，1以读
-//        if (StringUtils.isNotBlank(notice)){
             notice.setState("0");
             notice.setCreatetime(new Date());
             //使用分布式id生成器生成id
@@ -117,11 +122,10 @@ public class NoticeService {
             noticeMapper.insert(notice);
 
             //新的待推送消息入库
-            NoticeFresh noticeFresh = new NoticeFresh();
-            noticeFresh.setNoticeId(id);//消息id
-            noticeFresh.setUserId(notice.getReceiverId());//待通知用户的id
-            noticeFreshMapper.insert(noticeFresh);
-//        }
+//            NoticeFresh noticeFresh = new NoticeFresh();
+//            noticeFresh.setNoticeId(id);//消息id
+//            noticeFresh.setUserId(notice.getReceiverId());//待通知用户的id
+//            noticeFreshMapper.insert(noticeFresh);
 
     }
 

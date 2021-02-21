@@ -22,9 +22,9 @@ public class UserService {
     }
 
     public User login(User user) {
-        if (StringUtils.isNotBlank(user)){
+//        if (StringUtils.isNotBlank(user)){
             return userMapper.selectOne(user);
-        }
-        return null;
+//        }
+//        return null;
     }
 }

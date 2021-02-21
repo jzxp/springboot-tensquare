@@ -50,6 +50,7 @@ public class CommentService {
         comment.setThumbup(0);
         //保存数据
         commentRepository.save(comment);
+
     }
 
 

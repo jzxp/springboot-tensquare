@@ -7,8 +7,13 @@ import com.juzipi.demo.mapper.ArticleMapper;
 import com.juzipi.demo.pojo.Article;
 import com.juzipi.demo.pojo.Notice;
 import com.juzipi.demo.util.IdWorker;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -30,6 +35,8 @@ public class ArticleService {
 //    private RedisTemplate redisTemplate;
     @Autowired
     private NoticeClient noticeClient;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     /**
      * 查询article 的所有数据
@@ -99,7 +106,11 @@ public class ArticleService {
             noticeClient.save(notice);
         }
 
-
+        //发消息给 rabbitmq 就是新消息的通知
+        //一参数：交换机名: 文章订阅(交换机)
+        //二参数：路由键：使用时文章作者的id
+        //三参数：消息内容，只完成消息提醒
+        rabbitTemplate.convertAndSend("文章订阅(交换机)",userId,id);
     }
 
 
@@ -166,6 +177,19 @@ public class ArticleService {
         //根据文章id查询文章作者id
         String authorId = articleMapper.selectById(articleId).getUserid();
 
+        //创建一个rabbitmq的管理器
+        RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate.getConnectionFactory());
+        //声明一个交换机，用来处理新增文章消息
+        DirectExchange exchange = new DirectExchange("文章订阅(交换机)");
+        rabbitAdmin.declareExchange(exchange);
+        //创建队列，每个用户都有自己的队列，通过用户id区分
+        Queue queue = new Queue("文章-订阅-"+userId,true);
+
+        //声明交换机和队列的绑定关系，确保队列只收到对应作者的新增文章消息
+        //queue：队列  exchange：交换机    authorId：作者id
+        Binding binding = BindingBuilder.bind(queue).to(exchange).with(authorId);
+
+
         //存放用户订阅信息的集合key，存放作者id
         //article-subscribe
         String userKey = "用户订阅信息(key) : 作者id(value)" + userId;
@@ -183,6 +207,9 @@ public class ArticleService {
             //在用户订阅的信息的集合中删除订阅者
             stringRedisTemplate.boundSetOps(authorKey).remove(userId);
 
+            //如果取消订阅，就删除绑定关系
+            rabbitAdmin.removeBinding(binding);
+
             //返回false
             return false;
 
@@ -191,13 +218,21 @@ public class ArticleService {
         stringRedisTemplate.boundSetOps(userKey).add(authorId);
         stringRedisTemplate.boundSetOps(authorKey).add(userId);
         //true
+        //如果订阅就声明要绑定的队列
+        rabbitAdmin.declareQueue(queue);
+        //添加绑定关系
+        rabbitAdmin.declareBinding(binding);
         return true;
 
 
     }
 
 
-
+    /**
+     * 文章点赞
+     * @param articleId
+     * @param userId
+     */
     public void thumbup(String articleId, String userId) {
         Article article = articleMapper.selectById(articleId);
         //设置点赞初始值
@@ -222,6 +257,15 @@ public class ArticleService {
 
         //保存消息
         noticeClient.save(notice);
+
+        //创建一个rabbitmq的管理器
+        RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate.getConnectionFactory());
+
+        //创建队列，每个作者都有自己的队列，通过作者 id 区分
+        Queue queue = new Queue("文章-点赞-"+article.getUserid(),true);
+        rabbitAdmin.declareQueue(queue);
+        //发消息到队列中
+        rabbitTemplate.convertAndSend("文章-点赞-"+article.getUserid(),articleId);
 
     }
 

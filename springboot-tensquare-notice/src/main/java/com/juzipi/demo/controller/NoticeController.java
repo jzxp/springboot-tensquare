@@ -23,16 +23,17 @@ public class NoticeController {
 
     /**
      * 根据id查询消息
+     * 传的是新增消息时生成的id
      * @param id
      * @return
      */
     @RequestMapping(value = "{id}",method = RequestMethod.GET)
     public Result selectById(@PathVariable String id){
-        if (StringUtils.isNotBlank(id)){
+//        if (StringUtils.isNotBlank(id)){
             Notice notice = noticeService.selectById(id);
             return new Result(true, StatusCode.OK,"查询成功",notice);
-        }
-            return new Result(false, StatusCode.ERROR,"查询失败");
+//        }
+//            return new Result(false, StatusCode.ERROR,"查询失败");
 
 
     }
